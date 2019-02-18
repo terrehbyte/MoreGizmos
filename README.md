@@ -1,4 +1,4 @@
-# More Gizmos
+# MoreGizmos
 
 A proof-of-concept-quality library for Unity 2017+ that expands the number of
 deferred debug gizmos that can be drawn.
@@ -21,6 +21,43 @@ renders them in its own `OnDrawGizmos` message.
 
 Custom gizmos types can be derived from `GizmoDraw` and implement the required
 methods that will be called to prepare and render the gizmo.
+
+## Installation
+
+MoreGizmos is distributed as a package that can be managed through Unity's
+Package Manager UI as of 2018.1.
+
+### 2018.3+
+
+To add this to an existing Unity project, open your project's `manifest.json`
+file in your `Packages` directory and add the following line to your list of
+dependencies:
+
+```json
+  "dependencies": {
+    "com.tb.moregizmos": "https://github.com/terrehbyte/MoreGizmos.git",
+  }
+```
+
+Note that the trailing comma should be omitted if you add it as the last element
+in the list, of course.
+
+### Pre-2018.3
+
+Support for loading Git repositories as a package was only added in 2018.3, so
+you'll need to resort to local file management if you're running something older.
+
+![Screenshot of the "Add package from disk..." entry](https://user-images.githubusercontent.com/4968773/52925274-5a931900-32e5-11e9-990a-6c4dd1356260.png)
+
+Unity allows you to add a package by providing a relative file path to a
+package.json file. Best practices would advise that you place it somewhere
+co-located with your Unity project.
+
+### No Package Manager
+
+Alternatively, you may choose to download this project as a zip (or submodule if
+you're using Git) whose contents can be placed in the `Assets` directory of
+your project. The end-result should be: `Assets/MoreGizmos/<repo-contents>`.
 
 ## Quick Usage
 
@@ -52,7 +89,7 @@ public class ExampleUsage : MonoBehaviour
 - [ ] Add gizmo for screen-space text / world-space text
 - [ ] Publish packages
   - [ ] "*.unitypackage"-style pages
-  - [ ] "Unity Package Manager"-style packages
+  - [x] "Unity Package Manager"-style packages
 
 ## License
 
