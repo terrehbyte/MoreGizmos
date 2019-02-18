@@ -17,9 +17,9 @@ Here's what you'd have available with Unity's offerings and this library:
   - DrawSquare
   - DrawCustomGizmo(GizmoDraw)
 
-These are intended to be only drawn during run-time by collecting and delegating
-the drawing of said debug gizmos to an instance of `GizmosEx` which in turn
-renders them in its own `OnDrawGizmos` message.
+These are intended to be only drawn during editor-time by collecting and
+delegating the drawing of said debug gizmos to an instance of `GizmosEx` which
+in turn renders them in its own `OnDrawGizmos` message.
 
 Custom gizmos types can be derived from `GizmoDraw` and implement the required
 methods that will be called to prepare and render the gizmo.
