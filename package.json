@@ -3,7 +3,7 @@
 	"displayName":"MoreGizmos",
 	"version": "0.0.1-preview",
 	"unity": "2018.1",
-	"description": "Additional deferred debug gizmos to draw at editor-time.",
+	"description": "Additional debug gizmos to draw at editor-time.",
 	"dependencies": {
 	},
 	"keywords": ["gizmo"]

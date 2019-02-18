@@ -1,7 +1,9 @@
 # MoreGizmos
 
+![A example of a square gizmo being drawn](https://user-images.githubusercontent.com/4968773/52925428-3a178e80-32e6-11e9-853c-1c1f64938636.gif)
+
 A proof-of-concept-quality library for Unity 2017+ that expands the number of
-deferred debug gizmos that can be drawn.
+debug gizmos that can be drawn.
 
 Here's what you'd have available with Unity's offerings and this library:
 
@@ -15,7 +17,7 @@ Here's what you'd have available with Unity's offerings and this library:
   - DrawSquare
   - DrawCustomGizmo(GizmoDraw)
 
-These are intended to be only drawn during run-time by collecting and deferring
+These are intended to be only drawn during run-time by collecting and delegating
 the drawing of said debug gizmos to an instance of `GizmosEx` which in turn
 renders them in its own `OnDrawGizmos` message.
 
@@ -94,6 +96,11 @@ public class ExampleUsage : MonoBehaviour
 ## License
 
 Copyright (c) 2019 Terry Nguyen - MIT License
+
+The sprites used in the above GIF are CC0-licensed from [Buch][buch]'s dungeon
+tileset.
+
+[buch]:https://opengameart.org/users/buch
 
 More information can be found by reading the [LICENSE](LICENSE.md) file in this
 repository.
