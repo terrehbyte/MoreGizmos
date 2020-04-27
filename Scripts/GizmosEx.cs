@@ -24,7 +24,6 @@ using UnityEngine;
 // Retained mode wrapper for Unity's Gizmos class
 namespace MoreGizmos
 {
-    [ExecuteInEditMode]
     public class GizmosEx : MonoBehaviour
     {
         class GizmoSphere : GizmoDraw
@@ -139,28 +138,7 @@ namespace MoreGizmos
 
         private List<GizmoDraw> gizmos = new List<GizmoDraw>();
 
-        private static GizmosEx _instance;
-        private static GizmosEx instance
-        {
-            get
-            {
-                if(_instance == null)
-                {
-                    throw new MoreGizmosException("An instance of MoreGizmos is not present or has not yet been initialized in the scene.");
-                }
-
-                return _instance;
-            }
-            set
-            {
-                if(_instance != null)
-                {
-                    throw new MoreGizmosException("An instance of MoreGizmos already exists in the scene.");
-                }
-
-                _instance = value;
-            }
-        }
+        public static GizmosEx instance { get; private set; }
 
         public static void DrawSphere(Vector3 center, float radius, Color color = default(Color))
         {
@@ -187,9 +165,23 @@ namespace MoreGizmos
             instance.gizmos.Add(newGiz);
         }
 
-        private void Awake()
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void InstantiateImplementation()
         {
-            instance = this;
+            instance = new GameObject("[MoreGizmos]")
+            {
+                hideFlags = HideFlags.DontSave 
+            }.AddComponent<GizmosEx>();
+        }
+
+        private void Start()
+        {
+            if(instance != this)
+            {
+                Debug.Log("Replacing existing implementation of MoreGizmos on " + instance.gameObject.name + " with implementation on " + gameObject.name);
+                Destroy(instance);
+                instance = this;
+            }
         }
 
         private void OnDrawGizmos()
