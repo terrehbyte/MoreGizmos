@@ -176,7 +176,7 @@ namespace MoreGizmos
         private static void InstantiateImplementation()
         {
             instance = new GameObject("[MoreGizmos]")
-            { hideFlags = HideFlags.DontSave }.AddComponent<GizmosEx>();
+            { hideFlags = HideFlags.None }.AddComponent<GizmosEx>();
         }
 
         private void Start()
