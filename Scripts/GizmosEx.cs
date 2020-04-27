@@ -161,14 +161,13 @@ namespace MoreGizmos
             return DrawCustomGizmo(new GizmoSquare(center, normal, size, degrees, color));
         }
 
-        public static GizmoDraw DrawCustomGizmo(GizmoDraw newGiz)
-        {
-            instance.gizmos.Add(newGiz);
-            return instance.gizmos[instance.gizmos.Count - 1];
-        }
-
         public static T DrawCustomGizmo<T>(T newGiz) where T : GizmoDraw
         {
+            if(newGiz.duration == 0.0f && Time.inFixedTimeStep)
+            {
+                newGiz.duration += Time.fixedDeltaTime;
+            }
+
             instance.gizmos.Add(newGiz);
             return instance.gizmos[instance.gizmos.Count - 1] as T;
         }
@@ -213,7 +212,8 @@ namespace MoreGizmos
     {
         public Matrix4x4 matrix = Matrix4x4.identity;
         public Vector3 position;
-        public float expirationTime = Time.time;
+        public float duration;
+        private readonly float spawnTime = Time.time;
         private Color _color;
         public Color color
         {
@@ -231,7 +231,7 @@ namespace MoreGizmos
         {
             get
             {
-                return Time.time >= expirationTime;
+                return Time.time >= spawnTime + duration;
             }
         }
 
