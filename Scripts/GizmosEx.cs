@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 // TODO: Allow for persistent settings (like Unity) where you can enable/disable gizmos for certain classes
@@ -21,12 +20,15 @@ using UnityEngine;
 
 // TODO: consider having an IGizmoContributor interface that MoreGizmos can gather gizmos from
 
+// TODO: Separate GizmosEx from run-time implementation
+
 // Retained mode wrapper for Unity's Gizmos class
 namespace MoreGizmos
 {
+    [DefaultExecutionOrder(-100)]
     public class GizmosEx : MonoBehaviour
     {
-        class GizmoSphere : GizmoDraw
+        public class GizmoSphere : GizmoDraw
         {
             public GizmoSphere(Vector3 pos, float rad, Color col)
             {
@@ -42,7 +44,7 @@ namespace MoreGizmos
                 Gizmos.DrawSphere(position, radius);
             }
         }
-        class GizmoCube : GizmoDraw
+        public class GizmoCube : GizmoDraw
         {
             public GizmoCube(Vector3 pos, Vector3 siz, Color col)
             {
@@ -57,7 +59,7 @@ namespace MoreGizmos
                 Gizmos.DrawCube(position, size);
             }
         }
-        class GizmoCircle : GizmoDraw
+        public class GizmoCircle : GizmoDraw
         {
             public Vector3 normal;
             public float radius;
@@ -89,11 +91,9 @@ namespace MoreGizmos
 
                     Gizmos.DrawLine(position + legStart, position + legEnd);
                 }
-
-                return; // remove below when done
             }
         }
-        class GizmoSquare : GizmoDraw
+        public class GizmoSquare : GizmoDraw
         {
             public float degrees;
             public Vector3 normal;
@@ -137,48 +137,57 @@ namespace MoreGizmos
         }
 
         private List<GizmoDraw> gizmos = new List<GizmoDraw>();
+        public bool suppressInitializationLog = false;
 
         public static GizmosEx instance { get; private set; }
 
-        public static void DrawSphere(Vector3 center, float radius, Color color = default(Color))
+        public static GizmoSphere DrawSphere(Vector3 center, float radius, Color color = default)
         {
-            instance.gizmos.Add(new GizmoSphere( center, radius, color));
+            return DrawCustomGizmo(new GizmoSphere(center, radius, color));
         }
 
-        public static void DrawCube(Vector3 center, Vector3 size, Color color = default(Color))
+        public static GizmoCube DrawCube(Vector3 center, Vector3 size, Color color = default)
         {
-            instance.gizmos.Add(new GizmoCube( center, size, color ));
+            return DrawCustomGizmo(new GizmoCube(center, size, color));
         }
 
-        public static void DrawCircle(Vector3 center, Vector3 normal, float radius = 1.0f, int sides = 9, Color color = default(Color))
+        public static GizmoCircle DrawCircle(Vector3 center, Vector3 normal, float radius = 1.0f, int sides = 9, Color color = default)
         {
-            instance.gizmos.Add(new GizmoCircle( center, normal, radius, sides, color ));
+            return DrawCustomGizmo(new GizmoCircle(center, normal, radius, sides, color));
         }
 
-        public static void DrawSquare(Vector3 center, Vector3 normal, Vector2 size, float degrees = 0.0f, Color color = default(Color))
+        public static GizmoSquare DrawSquare(Vector3 center, Vector3 normal, Vector2 size, float degrees = 0.0f, Color color = default)
         {
-            instance.gizmos.Add(new GizmoSquare( center, normal, size, degrees, color ));
+            return DrawCustomGizmo(new GizmoSquare(center, normal, size, degrees, color));
         }
 
-        public static void DrawCustomGizmo(GizmoDraw newGiz)
+        public static GizmoDraw DrawCustomGizmo(GizmoDraw newGiz)
         {
             instance.gizmos.Add(newGiz);
+            return instance.gizmos[instance.gizmos.Count - 1];
+        }
+
+        public static T DrawCustomGizmo<T>(T newGiz) where T : GizmoDraw
+        {
+            instance.gizmos.Add(newGiz);
+            return instance.gizmos[instance.gizmos.Count - 1] as T;
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void InstantiateImplementation()
         {
             instance = new GameObject("[MoreGizmos]")
-            {
-                hideFlags = HideFlags.DontSave 
-            }.AddComponent<GizmosEx>();
+            { hideFlags = HideFlags.DontSave }.AddComponent<GizmosEx>();
         }
 
         private void Start()
         {
-            if(instance != this)
+            if (instance != this)
             {
-                Debug.Log("Replacing existing implementation of MoreGizmos on " + instance.gameObject.name + " with implementation on " + gameObject.name);
+                if (!suppressInitializationLog)
+                { 
+                    Debug.Log("Replacing existing implementation of MoreGizmos on " + instance.gameObject.name + " with implementation on " + gameObject.name);
+                }
                 Destroy(instance);
                 instance = this;
             }
@@ -192,9 +201,9 @@ namespace MoreGizmos
             {
                 gizmos[i].BeforeDraw();
                 gizmos[i].Draw();
-            }
 
-            gizmos.Clear();
+                if (gizmos[i].Expired) { gizmos.RemoveAt(i); }
+            }
 
             Gizmos.color = originalColor;
         }
@@ -202,7 +211,9 @@ namespace MoreGizmos
 
     public abstract class GizmoDraw
     {
+        public Matrix4x4 matrix = Matrix4x4.identity;
         public Vector3 position;
+        public float expirationTime = Time.time;
         private Color _color;
         public Color color
         {
@@ -216,9 +227,18 @@ namespace MoreGizmos
             }
         }
 
+        public virtual bool Expired
+        {
+            get
+            {
+                return Time.time >= expirationTime;
+            }
+        }
+
         public virtual void BeforeDraw()
         {
             Gizmos.color = color;
+            Gizmos.matrix = matrix;
         }
         public abstract void Draw();
     }
