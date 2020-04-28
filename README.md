@@ -2,7 +2,7 @@
 
 ![A example of a square gizmo being drawn](https://user-images.githubusercontent.com/4968773/52925428-3a178e80-32e6-11e9-853c-1c1f64938636.gif)
 
-A proof-of-concept-quality library for Unity 2017+ that expands the number of
+A proof-of-concept-quality library for Unity 2018.4+ that expands the number of
 debug gizmos that can be drawn.
 
 Here's what you'd have available with Unity's offerings and this library:
