@@ -7,15 +7,27 @@ debug gizmos that can be drawn.
 
 Here's what you'd have available with Unity's offerings and this library:
 
-- UnityEngine.Debug
+- [UnityEngine.Gizmos](https://docs.unity3d.com/ScriptReference/Gizmos.html) - usable in OnDrawGizmos, editor-only
+  - DrawCube
+  - DrawFrustum
+  - DrawGUITexture
+  - DrawIcon
   - DrawLine
+  - DrawMesh
   - DrawRay
-- MoreGizmos.GizmosEx
+  - DrawSphere
+  - DrawWireCube
+  - DrawWireMesh
+  - DrawWireSphere
+- [UnityEngine.Debug](https://docs.unity3d.com/ScriptReference/Debug.html) - usable anywhere, editor-only
+  - DrawRay
+  - DrawLine
+- MoreGizmos.GizmosEx - usable anywhere, editor-only (for now)
   - DrawSphere
   - DrawCube
   - DrawCircle
   - DrawSquare
-  - DrawCustomGizmo(GizmoDraw)
+  - DrawCustomGizmo - accepts objects of type `GizmoDraw`
 
 These are intended to be only drawn during editor-time by collecting and
 delegating the drawing of said debug gizmos to an instance of `GizmosEx` which
@@ -42,7 +54,10 @@ dependencies:
 ```
 
 Note that the trailing comma should be omitted if you add it as the last element
-in the list, of course.
+in the list, of course. For more information or advanced usage, refer to the
+Unity Manual for [specifying dependencies via Git URLs][unityManUPMGit].
+
+[unityManUPMGit]:https://docs.unity3d.com/Manual/upm-git.html
 
 ### Pre-2018.3
 
@@ -53,13 +68,14 @@ you'll need to resort to local file management if you're running something older
 
 Unity allows you to add a package by providing a relative file path to a
 package.json file. Best practices would advise that you place it somewhere
-co-located with your Unity project.
+co-located with your Unity project (and versioned, of course).
 
 ### No Package Manager
 
 Alternatively, you may choose to download this project as a zip (or submodule if
 you're using Git) whose contents can be placed in the `Assets` directory of
-your project. The end-result should be: `Assets/MoreGizmos/<repo-contents>`.
+your project. The end-result should be: `ProjectRoot/Packages/<repo-contents>`
+as a built-in package.
 
 ## Quick Usage
 
@@ -77,25 +93,9 @@ public class ExampleUsage : MonoBehaviour
 }
 ```
 
-## Roadmap
-
-- [ ] Support different gizmo rendering backends (i.e. don't depend on Unity's gizmo message)
-  - [ ] Provide base type to allow custom rendering backends API (e.g. `IGizmoDrawer`)
-- [ ] Optimize for memory and reduce garbage generated
-- [ ] Add persistent draw calls that stay for _x_ seconds
-- [ ] Add support for rendering at run-time
-- [ ] Add support for drawing lines and gizmos
-- [ ] Automatically strip out gizmos in development builds
-  - [ ] Add special case for gizmos available at run-time (like `Trace` gizmos)
-- [ ] Add categories/labels to support filtering / selective rendering
-- [ ] Add gizmo for screen-space text / world-space text
-- [ ] Publish packages
-  - [ ] "*.unitypackage"-style pages
-  - [x] "Unity Package Manager"-style packages
-
 ## License
 
-Copyright (c) 2019 Terry Nguyen - MIT License
+Copyright (c) 2019-2020 Terry Nguyen - MIT License
 
 The sprites used in the above GIF are CC0-licensed from [Buch][buch]'s dungeon
 tileset.
